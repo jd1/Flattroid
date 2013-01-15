@@ -15,6 +15,11 @@ gen/
 # Local configuration file (sdk path, etc)
 local.properties
 
+#Backup
+*~
+
 # Eclipse project files
 .classpath
 .project
+
+src/org/isobeef/jd/flattroid/flattrApi/FlattrOAuthImpl.java
