@@ -23,7 +23,7 @@ public class UserFetcher extends FetcherAsyncTask<UserId, Void, User> {
 				user = service.getMyself();
 			}
 		} catch (FlattrException e) {
-			exception = e;
+			exceptions.add(e);
 		}
 		return user;
 		

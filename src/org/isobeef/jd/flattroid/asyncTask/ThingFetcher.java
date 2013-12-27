@@ -6,7 +6,6 @@ import org.isobeef.jd.flattroid.util.MyLog;
 import org.shredzone.flattr4j.FlattrService;
 import org.shredzone.flattr4j.exception.FlattrException;
 import org.shredzone.flattr4j.model.Thing;
-import org.shredzone.flattr4j.model.ThingId;
 
 import android.net.Uri;
 
@@ -14,7 +13,7 @@ public class ThingFetcher extends ServiceTask<Uri, Void, Thing> {
 
 	private static final String TAG = "ThingFetcher";
 
-	public ThingFetcher(FlattrService service, OnFetched<Thing> listener) throws Exception {
+	public ThingFetcher(FlattrService service, OnFetched<Thing> listener) {
 		super(service, listener);
 	}
 
@@ -28,14 +27,14 @@ public class ThingFetcher extends ServiceTask<Uri, Void, Thing> {
 				MyLog.d(TAG, pathSegments.get(1));
 				return service.getThing(Thing.withId(pathSegments.get(1)));
 			} catch (FlattrException e) {
-				exception = e;
+				exceptions.add(e);
 				return null;
 			}
 		}
 		try {
 			return service.getThingByUrl(params[0].toString());
 		} catch (FlattrException e) {
-			exception = e;
+			exceptions.add(e);
 			return null;
 		}
 	}

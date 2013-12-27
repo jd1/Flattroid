@@ -1,43 +1,49 @@
 package org.isobeef.jd.flattroid.listener;
 
-import org.isobeef.jd.flattroid.asyncTask.OnFetched;
-import org.isobeef.jd.flattroid.util.MyLog;
-import org.shredzone.flattr4j.exception.FlattrException;
+import org.isobeef.jd.flattroid.data.ImageDisplayer;
+import org.isobeef.jd.flattroid.data.StringImageBundle;
 
-import android.app.ProgressDialog;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+
 import android.graphics.Bitmap;
-import android.view.View;
+import android.util.Log;
 import android.widget.ImageView;
 
-public class ImageListener implements OnFetched<Bitmap> {
+public class ImageListener implements ImageLoadingListener {
 
-	protected static final String TAG = "ImageListener";
-	
-	protected ImageView image;
-	public ImageListener(ImageView image) {
-		this.image = image;
+	protected StringImageBundle bundle;
+	protected ImageView view;
+	public ImageListener(StringImageBundle sib, ImageView v) {
+		bundle = sib;
+		view = v;
 	}
 	
 	@Override
-	public void onFetched(Bitmap result) {
-		if(result != null) {
-			image.setImageBitmap(result);
-			image.setVisibility(View.VISIBLE);
-
-			MyLog.d(TAG, result.getWidth() + "x" + result.getHeight());
-			MyLog.d(TAG, image.getWidth() + "x" + image.getHeight());
-		}
-	}
-
-	@Override
-	public ProgressDialog getProgressDialog() {
-		return null;
-	}
-
-	@Override
-	public void onError(FlattrException e) {
-		e.printStackTrace();
+	public void onLoadingStarted() {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onLoadingFailed(FailReason failReason) {
+		Log.e("ImageListener", failReason.toString());
+		
+	}
+
+	@Override
+	public void onLoadingComplete(Bitmap loadedImage) {
+		bundle.setBitmap(loadedImage);
+		new ImageDisplayer().display(loadedImage, view);
+		
+	}
+
+	@Override
+	public void onLoadingCancelled() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 	
 }

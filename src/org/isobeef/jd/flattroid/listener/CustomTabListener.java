@@ -2,9 +2,8 @@ package org.isobeef.jd.flattroid.listener;
 
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
 
 public class CustomTabListener implements ActionBar.TabListener {
 

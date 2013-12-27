@@ -1,76 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.isobeef.jd.flattroid"
-    android:versionCode="1"
-    android:versionName="1.0" >
+	package="org.isobeef.jd.flattroid" android:versionCode="1"
+	android:versionName="1.0">
 
-    <uses-sdk 
-        android:minSdkVersion="8"
-        android:targetSdkVersion="16" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+	<uses-sdk android:minSdkVersion="11" android:targetSdkVersion="17" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name="org.isobeef.jd.flattroid.activity.MainActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+	<application android:allowBackup="true" android:icon="@drawable/ic_launcher"
+		android:label="@string/app_name" android:theme="@style/AppTheme">
+		<activity android:name="org.isobeef.jd.flattroid.activity.MainActivity"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.Register">
-            <intent-filter>
-				<action android:name="android.intent.action.VIEW"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<category android:name="android.intent.category.BROWSABLE"/>
-				<data android:scheme="flattr4j" android:host="org.isobeef.jd.flattroid"/>
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.Register" android:exported="false">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="flattr4j" android:host="org.isobeef.jd.flattroid" />
 			</intent-filter>
 
-        </activity>
-        <activity
-            android:name=".activity.ThingActivity">
-            <meta-data
-            	android:name="android.support.PARENT_ACTIVITY"
-            	android:value="org.isobeef.jd.flattroid.activity.MainActivity" />
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<category android:name="android.intent.category.BROWSABLE"/>
-	            <data 
-	                android:scheme="http"
-	                android:host="flattr.com"
-	                android:pathPrefix="/thing"/>
-	            <data 
-	                android:scheme="https"
-	                android:host="flattr.com"
-	                android:pathPrefix="/thing"/>
-	    	</intent-filter>
-        </activity>
-        <activity
-            android:name="org.isobeef.jd.flattroid.activity.UserActivity">
-            <meta-data
-            	android:name="android.support.PARENT_ACTIVITY"
-            	android:value="org.isobeef.jd.flattroid.activity.MainActivity" />
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-				<category android:name="android.intent.category.DEFAULT"/>
-				<category android:name="android.intent.category.BROWSABLE"/>
-	            <data 
-	                android:scheme="http"
-	                android:host="flattr.com"
-	                android:pathPrefix="/profile"/>
-	            <data 
-	                android:scheme="https"
-	                android:host="flattr.com"
-	                android:pathPrefix="/profile"/>
-	    	</intent-filter>
-        </activity>
-    </application>
+		</activity>
+		<activity android:name=".activity.WebViewActivity" />
+		<activity android:name=".activity.CatalogActivity"
+			android:exported="true"
+			android:parentActivityName="org.isobeef.jd.flattroid.activity.MainActivity">
+			<meta-data android:name="android.support.PARENT_ACTIVITY"
+				android:value="org.isobeef.jd.flattroid.activity.MainActivity" />
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="http" android:host="flattr.com"
+					android:pathPrefix="/catalog" />
+				<data android:scheme="https" android:host="flattr.com"
+					android:pathPrefix="/catalog" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.CategoryActivity"
+			android:exported="false"
+			android:parentActivityName="org.isobeef.jd.flattroid.activity.CatalogActivity">
+			<meta-data android:name="android.support.PARENT_ACTIVITY"
+				android:value="org.isobeef.jd.flattroid.activity.CatalogActivity" />
+		</activity>
+		<activity android:name=".activity.ThingActivity"
+			android:exported="true"
+			android:parentActivityName="org.isobeef.jd.flattroid.activity.MainActivity">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="http" android:host="flattr.com"
+					android:pathPrefix="/thing" />
+				<data android:scheme="https" android:host="flattr.com"
+					android:pathPrefix="/thing" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.UserActivity"
+			android:exported="true">
+			<!-- meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.isobeef.jd.flattroid.activity.MainActivity" 
+				/> -->
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="http" android:host="flattr.com"
+					android:pathPrefix="/profile" />
+				<data android:scheme="https" android:host="flattr.com"
+					android:pathPrefix="/profile" />
+			</intent-filter>
+		</activity>
+	</application>
 
 </manifest>

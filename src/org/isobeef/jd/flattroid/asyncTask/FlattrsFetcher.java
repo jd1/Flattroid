@@ -10,7 +10,7 @@ import org.shredzone.flattr4j.model.ThingId;
 public class FlattrsFetcher extends ServiceTask<ThingId, Void, List<Flattr>> {
 
 	public FlattrsFetcher(FlattrService service,
-			OnFetched<List<Flattr>> listener) throws Exception {
+			OnFetched<List<Flattr>> listener) {
 		super(service, listener);
 	}
 
@@ -19,8 +19,7 @@ public class FlattrsFetcher extends ServiceTask<ThingId, Void, List<Flattr>> {
 		try {
 			return service.getFlattrs(arg0[0]);
 		} catch (FlattrException e) {
-			// TODO Auto-generated catch block
-			exception = e;
+			exceptions.add(e);
 			return null;
 		}
 	}

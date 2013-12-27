@@ -4,21 +4,35 @@ import java.util.List;
 
 import org.shredzone.flattr4j.FlattrService;
 import org.shredzone.flattr4j.exception.FlattrException;
-import org.shredzone.flattr4j.model.Category;
+import org.shredzone.flattr4j.model.CategoryId;
+import org.shredzone.flattr4j.model.SearchQuery;
+import org.shredzone.flattr4j.model.SearchResult;
+import org.shredzone.flattr4j.model.Thing;
 
-public class CategoryFetcher extends ServiceTask<Void, Void, List<Category>> {
+/**
+ * Fetch things in a category.
+ * @author Johannes Dilli
+ *
+ */
+public class CategoryFetcher extends ServiceTask<CategoryId, Void, List<Thing>> {
 
 	public CategoryFetcher(FlattrService service,
-			OnFetched<List<Category>> listener) throws Exception {
+			OnFetched<List<Thing>> listener) {
 		super(service, listener);
 	}
 
 	@Override
-	protected List<Category> doInBackground(Void... params) {
+	protected List<Thing> doInBackground(CategoryId... ids) {
+		if (ids.length != 1) {
+			throw new IllegalArgumentException("Only one category id allowed!");
+		}
+		SearchQuery query = new SearchQuery();
+		query.addCategory(ids[0]);
 		try {
-			return service.getCategories();
+			SearchResult result = service.searchThings(query, null, null);
+			return result.getThings();
 		} catch (FlattrException e) {
-			exception = e;
+			exceptions.add(e);
 			return null;
 		}
 	}

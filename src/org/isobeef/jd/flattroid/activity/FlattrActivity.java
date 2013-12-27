@@ -1,39 +1,21 @@
 package org.isobeef.jd.flattroid.activity;
 
-import org.isobeef.jd.flattroid.R;
+import java.util.List;
+
 import org.isobeef.jd.flattroid.asyncTask.FlattrTask;
-import org.isobeef.jd.flattroid.asyncTask.ImageFetcher;
 import org.isobeef.jd.flattroid.asyncTask.OnFetched;
-import org.isobeef.jd.flattroid.asyncTask.ThingFetcher;
 import org.isobeef.jd.flattroid.data.Storage;
-import org.isobeef.jd.flattroid.flattrApi.FlattrOAuthHelper;
-import org.isobeef.jd.flattroid.util.MyLog;
 import org.shredzone.flattr4j.FlattrService;
 import org.shredzone.flattr4j.exception.FlattrException;
-import org.shredzone.flattr4j.model.Category;
 import org.shredzone.flattr4j.model.Thing;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-
-
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
-public abstract class FlattrActivity extends SherlockFragmentActivity{
+public abstract class FlattrActivity extends ActionBarActivity {
 	protected static final String TAG = "FlattrActivity";
 	
 	protected FlattrService service;
@@ -68,12 +50,7 @@ public abstract class FlattrActivity extends SherlockFragmentActivity{
 	}
 	
 	protected void flattr(Thing thing) {
-		try {
-			new FlattrTask(service, new FlattrListener()).execute(thing);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		new FlattrTask(service, new FlattrListener()).execute(thing);
 	}
 	
 	class FlattrListener implements OnFetched<Boolean> {
@@ -91,10 +68,11 @@ public abstract class FlattrActivity extends SherlockFragmentActivity{
 		}
 
 		@Override
-		public void onError(FlattrException e) {
-			Toast.makeText(FlattrActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-			e.printStackTrace();
-			
+		public void onError(List<FlattrException> exceptions) {
+			for(FlattrException e : exceptions) {
+				Toast.makeText(FlattrActivity.this, e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+				e.printStackTrace();
+			}
 		}
 	}
 }

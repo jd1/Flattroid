@@ -42,7 +42,10 @@ public class ImageFetcher extends FetcherAsyncTask<String, Void, Bitmap> {
 	                inputStream = entity.getContent(); 
 	                final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 	                return bitmap;
+	            } catch(Exception e) {
+	            	Log.e("ImageDownloader", e.getMessage());
 	            } finally {
+	            
 	                if (inputStream != null) {
 	                    inputStream.close();  
 	                }

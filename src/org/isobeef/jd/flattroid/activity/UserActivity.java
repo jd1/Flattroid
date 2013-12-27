@@ -1,5 +1,6 @@
 package org.isobeef.jd.flattroid.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.isobeef.jd.flattroid.R;
@@ -7,14 +8,16 @@ import org.isobeef.jd.flattroid.adapter.PagerAdapter;
 import org.isobeef.jd.flattroid.asyncTask.OnFetched;
 import org.isobeef.jd.flattroid.asyncTask.UserActivityData;
 import org.isobeef.jd.flattroid.asyncTask.UserDataFetcher;
-import org.isobeef.jd.flattroid.fragment.FlattrsFragment;
+import org.isobeef.jd.flattroid.fragment.ActivitiesFragment;
+import org.isobeef.jd.flattroid.fragment.ThingFragment;
 import org.isobeef.jd.flattroid.fragment.TitleFragment;
 import org.isobeef.jd.flattroid.fragment.UserFragment;
-import org.isobeef.jd.flattroid.listener.CustomTabListener;
+import org.isobeef.jd.flattroid.util.JsonUtils;
 import org.isobeef.jd.flattroid.util.MyLog;
 import org.shredzone.flattr4j.exception.FlattrException;
 import org.shredzone.flattr4j.model.Activity;
 import org.shredzone.flattr4j.model.Flattr;
+import org.shredzone.flattr4j.model.Thing;
 import org.shredzone.flattr4j.model.User;
 import org.shredzone.flattr4j.model.UserId;
 
@@ -24,15 +27,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.TabListener;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.ActionBar.TabListener;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 public class UserActivity extends FlattrActivity implements OnFetched<UserActivityData> {
 	private static final String FRAGMENTS = "fragments";
@@ -40,42 +41,32 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 	public static String USER_ID = "userId";
 	
 	protected ActionBar mActionBar;
-	private ViewPager viewPager;
 	private PagerAdapter adapter;
 	protected TabListener tabListener;
+	protected ViewPager viewPager;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_user);
-		
-		viewPager = (ViewPager) findViewById(R.id.viewpager);
+		setContentView(R.layout.activity_viewpager);
 		adapter = new PagerAdapter(getSupportFragmentManager());
+		viewPager = (ViewPager) findViewById(R.id.viewpager);
 		viewPager.setAdapter(adapter);
 		
-		tabListener = new CustomTabListener(viewPager);
-		
 		mActionBar = getSupportActionBar();
-		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		
-        ViewPager.SimpleOnPageChangeListener pageChangeListener = new ViewPager.SimpleOnPageChangeListener(){
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                mActionBar.setSelectedNavigationItem(position);
-            }
-        };
-        viewPager.setOnPageChangeListener(pageChangeListener);
+		//mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        //indicator.setOnPageChangeListener(pageChangeListener);
 		
 		if(savedInstanceState != null) {
+			
         	String[] frags = savedInstanceState.getStringArray(FRAGMENTS);
         	for(String tag : frags) {
         		TitleFragment fragment = (TitleFragment) getSupportFragmentManager().findFragmentByTag(tag);
         		if(fragment == null) {
         			Log.e(TAG, "fragment null " + tag);
         		} else {
-        			add(fragment);
+        			adapter.add(fragment);
         		}
         	}
         } else {
@@ -84,12 +75,7 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
     			MyLog.d(TAG, uri.toString());
     			if(uri.getPathSegments().size() >= 2) {
     				UserId id = User.withId(uri.getPathSegments().get(1));
-    				try {
-    					new UserDataFetcher(service, UserActivity.this).execute(id);
-    				} catch (Exception e) {
-    					// TODO Auto-generated catch block
-    					e.printStackTrace();
-    				}
+    				new UserDataFetcher(service, UserActivity.this).execute(id);
     			}
     			
     			
@@ -98,14 +84,8 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 	}
 	
 	@Override
-	protected void onResume() {
-		super.onResume();
-		
-	}
-	
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-	    MenuInflater inflater = getSupportMenuInflater();
+	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.activity_thing, menu);
 	    return true;
 	}
@@ -132,15 +112,55 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		List<Activity> incoming = result.getIncoming();
 		List<Activity> outgoing = result.getOutgoing();
 		List<Flattr> flattrs = result.getFlattrs();
+		List<Thing> things = result.getThings();
 		User user = result.getUser();
+		
 		if(user != null) {
-			UserFragment fragment = new UserFragment(user);
-			add(fragment);
+			mActionBar.setTitle(user.getFirstname() + " " + user.getLastname());
+			UserFragment fragment = new UserFragment();
+			Bundle bundle = new Bundle();
+			bundle.putString(UserFragment.USER, user.toJSON());
+			fragment.setArguments(bundle);
+			adapter.add(fragment);
 		}
+		
+		if(things != null && !things.isEmpty()) {
+			addThings(things, "Things");
+		}
+		
 		if(flattrs != null) {
-			FlattrsFragment fragment = new FlattrsFragment(flattrs);
-			add(fragment);
+			List<Thing> flattrThings = new ArrayList<Thing>();
+			for(Flattr flattr : flattrs) {
+				flattrThings.add(flattr.getThing());
+			}
+			addThings(flattrThings, "Flattrs");
 		}
+		
+		if(incoming != null && !incoming.isEmpty()) {
+			addActivities(incoming, "Incoming");
+		}
+		
+		if(outgoing != null && !outgoing.isEmpty()) {
+			addActivities(outgoing, "Outgoing");
+		}
+	}
+	
+	private void addThings(List<Thing> things, String title) {
+		ThingFragment fragment = new ThingFragment();
+		Bundle bundle = new Bundle();
+		bundle.putStringArrayList(ThingFragment.FLATTRS, JsonUtils.toJson(things));
+		bundle.putString(ThingFragment.TITLE, "Flattrs");
+		fragment.setArguments(bundle);
+		adapter.add(fragment);
+	}
+	
+	private void addActivities(List<Activity> activities, String title) {
+		ActivitiesFragment fragment = new ActivitiesFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString(ActivitiesFragment.TITLE, title);
+		bundle.putStringArrayList(ActivitiesFragment.ACTIVITIES, JsonUtils.toJson(activities));
+		fragment.setArguments(bundle);
+		adapter.add(fragment);
 	}
 
 	@Override
@@ -149,9 +169,11 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 	}
 
 	@Override
-	public void onError(FlattrException e) {
-		Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-		e.printStackTrace();
+	public void onError(List<FlattrException> exceptions) {
+		for(FlattrException e : exceptions) {
+			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -159,20 +181,12 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		super.onSaveInstanceState(savedInstanceState);
 	  
 		String[] fragments = new String[adapter.getFragments().size()];
-		int counter = adapter.getFragments().size() -1;
+		int counter = 0;//adapter.getFragments().size() -1;
 		for(Fragment frag : adapter.getFragments()) {
 			MyLog.d(TAG, "save " + frag);
 			fragments[counter] = frag.getTag();
-			counter--;
+			counter++;
 		}
 		savedInstanceState.putStringArray(FRAGMENTS, fragments);
-	}
-	
-	private void add(TitleFragment fragment) {
-		adapter.add(fragment);
-		Tab tab = mActionBar.newTab()
-				.setText(fragment.getTitle())
-				.setTabListener(tabListener);
-		mActionBar.addTab(tab);
 	}
 }

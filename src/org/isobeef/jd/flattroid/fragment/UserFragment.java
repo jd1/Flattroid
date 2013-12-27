@@ -1,37 +1,27 @@
 package org.isobeef.jd.flattroid.fragment;
 
+import java.util.List;
+
 import org.isobeef.jd.flattroid.R;
-import org.isobeef.jd.flattroid.activity.FlattrActivity;
 import org.isobeef.jd.flattroid.asyncTask.ImageFetcher;
 import org.isobeef.jd.flattroid.asyncTask.OnFetched;
-import org.isobeef.jd.flattroid.asyncTask.ThingFetcher;
 import org.isobeef.jd.flattroid.asyncTask.UserFetcher;
-import org.isobeef.jd.flattroid.listener.ImageListener;
-import org.isobeef.jd.flattroid.util.MyLog;
+import org.shredzone.flattr4j.connector.FlattrObject;
 import org.shredzone.flattr4j.exception.FlattrException;
 import org.shredzone.flattr4j.model.User;
-import org.shredzone.flattr4j.model.UserId;
-
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
 	
+	public static final String USER = "user";
 	protected static final String TAG = "UserFragment";
 	protected static final String NAME = "name";
 	protected static final String COUNTRY = "country";
@@ -53,28 +43,6 @@ public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
 	
 	protected UserFetcher fetcher = null;
 	
-	public UserFragment(User user) {
-		name = user.getFirstname() + " " + user.getLastname() + " (" + user.getUserId() + ")";
-		if(user.getCity().length() > 0) {
-			country += user.getCity();
-		}
-		if(user.getCity().length() > 0 && user.getCountry().length() > 0) {
-			country += ", ";
-		}
-		if(user.getCountry().length() > 0) {
-			country += user.getCountry();
-		}
-		description = user.getDescription();
-		String avatar = user.getGravatar();
-		if(avatar.contains("gravatar")) {
-			avatar = avatar.replace("s=40", "s=200");
-		} else {
-			avatar = avatar.replace("small", "large");
-		}
-		imageUrl = avatar;
-		hasData = true;
-	}
-	
 	public UserFragment() {
 		hasData = false;
 	}
@@ -82,7 +50,30 @@ public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(!hasData && savedInstanceState != null) {
+		Bundle arguments = getArguments();
+		if ( arguments != null ) {
+			String userJson = arguments.getString(USER);
+			User user = new User( new FlattrObject(userJson));
+			
+			name = user.getFirstname() + " " + user.getLastname() + " (" + user.getUserId() + ")";
+			if(user.getCity().length() > 0) {
+				country += user.getCity();
+			}
+			if(user.getCity().length() > 0 && user.getCountry().length() > 0) {
+				country += ", ";
+			}
+			if(user.getCountry().length() > 0) {
+				country += user.getCountry();
+			}
+			description = user.getDescription();
+			String avatar = user.getGravatar();
+			if(avatar.contains("gravatar")) {
+				avatar = avatar.replace("s=40", "s=200");
+			} else {
+				avatar = avatar.replace("small", "large");
+			}
+			imageUrl = avatar;
+		} else if(!hasData && savedInstanceState != null) {
 			name = savedInstanceState.getString(NAME);
 			country = savedInstanceState.getString(COUNTRY);
 			description = savedInstanceState.getString(DESCRIPTION);
@@ -143,9 +134,10 @@ public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
 	}
 
 	@Override
-	public void onError(FlattrException e) {
-		Log.e(TAG, e.getMessage());
-		
+	public void onError(List<FlattrException> exceptions) {
+		for(FlattrException e : exceptions) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package org.isobeef.jd.flattroid.flattrApi;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import org.isobeef.jd.flattroid.activity.Register;
 import org.isobeef.jd.flattroid.asyncTask.OnFetched;
@@ -56,7 +57,7 @@ public class FlattrOAuthHelper implements OnFetched<AccessToken>{
 	}
 
 	@Override
-	public void onError(FlattrException e) {
+	public void onError(List<FlattrException> exceptions) {
 		// TODO Auto-generated method stub
 		
 	}

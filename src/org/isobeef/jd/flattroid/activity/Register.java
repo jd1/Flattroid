@@ -1,27 +1,20 @@
 package org.isobeef.jd.flattroid.activity;
 
 import org.isobeef.jd.flattroid.R;
-import org.isobeef.jd.flattroid.R.id;
-import org.isobeef.jd.flattroid.R.layout;
 import org.isobeef.jd.flattroid.data.Storage;
 import org.isobeef.jd.flattroid.flattrApi.FlattrOAuthHelper;
 import org.shredzone.flattr4j.exception.FlattrException;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
-
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class Register extends SherlockActivity {
+public class Register extends ActionBarActivity {
 	private Button authBtn;
 	private FlattrOAuthHelper builder;
 	
@@ -47,7 +40,6 @@ public class Register extends SherlockActivity {
 			}
 		});
 	}
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

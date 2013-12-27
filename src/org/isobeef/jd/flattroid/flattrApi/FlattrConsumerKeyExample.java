@@ -2,6 +2,7 @@ package org.isobeef.jd.flattroid.flattrApi;
 
 import org.shredzone.flattr4j.oauth.ConsumerKey;
 
+@SuppressWarnings("serial")
 public class FlattrConsumerKeyExample extends ConsumerKey {
 
 	@Override
