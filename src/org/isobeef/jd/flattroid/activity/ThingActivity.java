@@ -9,10 +9,9 @@ import org.isobeef.jd.flattroid.asyncTask.OnFetched;
 import org.isobeef.jd.flattroid.asyncTask.ThingFetcher;
 import org.isobeef.jd.flattroid.asyncTask.UserFetcher;
 import org.isobeef.jd.flattroid.data.Holder;
-import org.isobeef.jd.flattroid.data.ImageDisplayer;
 import org.isobeef.jd.flattroid.data.Storage;
 import org.isobeef.jd.flattroid.data.StringImageBundle;
-import org.isobeef.jd.flattroid.listener.ImageListener;
+import org.isobeef.jd.flattroid.util.ImageUtils;
 import org.isobeef.jd.flattroid.util.MyLog;
 import org.shredzone.flattr4j.exception.FlattrException;
 import org.shredzone.flattr4j.model.Flattr;
@@ -227,15 +226,8 @@ public class ThingActivity extends FlattrActivity implements OnFetched<Thing>{
 		ImageView image = (ImageView) view.findViewById(R.id.imageView1);
 		TextView text = (TextView) view.findViewById(R.id.textView1);
 
-		text.setText(bundle.getStringItem());
-		if(bundle.getBitmap() == null) {
-			MyLog.d(TAG, "load Image");
-			Holder.getImageLoader(ThingActivity.this).loadImage(this, bundle.getAvatar(), new ImageListener(bundle, image));
-		} else {
-			MyLog.d(TAG, "image found");
-			new ImageDisplayer().display(bundle.getBitmap(), image);
-		}
-		
+		text.setText(bundle.getDescription());
+		ImageUtils.loadOrSetImage(bundle, image, this);
 		
 		flattredBy.addView(view);
 	}

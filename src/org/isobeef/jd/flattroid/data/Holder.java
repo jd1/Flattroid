@@ -14,7 +14,7 @@ public class Holder {
 	protected static final String TAG = "Holder";
 	
 	protected static ImageLoader imageLoader = null;
-	public static ImageLoader getImageLoader(Context c) {
+	public static synchronized ImageLoader getImageLoader(Context c) {
 		if(imageLoader == null) {
 			DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
 			.showStubImage(android.R.drawable.checkbox_off_background)

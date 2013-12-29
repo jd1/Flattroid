@@ -1,17 +1,12 @@
 package org.isobeef.jd.flattroid.fragment;
 
-import java.util.List;
-
 import org.isobeef.jd.flattroid.R;
-import org.isobeef.jd.flattroid.asyncTask.ImageFetcher;
-import org.isobeef.jd.flattroid.asyncTask.OnFetched;
 import org.isobeef.jd.flattroid.asyncTask.UserFetcher;
+import org.isobeef.jd.flattroid.data.StringImageBundle;
+import org.isobeef.jd.flattroid.util.ImageUtils;
 import org.shredzone.flattr4j.connector.FlattrObject;
-import org.shredzone.flattr4j.exception.FlattrException;
 import org.shredzone.flattr4j.model.User;
 
-import android.app.ProgressDialog;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,15 +14,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
+public class UserFragment extends TitleFragment {
 	
 	public static final String USER = "user";
 	protected static final String TAG = "UserFragment";
 	protected static final String NAME = "name";
 	protected static final String COUNTRY = "country";
 	protected static final String DESCRIPTION = "description";
-	protected static final String IMAGE_URL = "imageUrl";
-	protected static final String IMAGE = "image";
+	protected static final String USER_IMAGE = "userImage";
 
 	protected TextView nameView;
 	protected TextView countryView;
@@ -38,8 +32,7 @@ public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
 	protected String name;
 	protected String country = "";
 	protected String description;
-	protected String imageUrl;
-	protected Bitmap image;
+	protected StringImageBundle userImage;
 	
 	protected UserFetcher fetcher = null;
 	
@@ -51,6 +44,7 @@ public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle arguments = getArguments();
+		setTitle("Info");
 		if ( arguments != null ) {
 			String userJson = arguments.getString(USER);
 			User user = new User( new FlattrObject(userJson));
@@ -72,13 +66,13 @@ public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
 			} else {
 				avatar = avatar.replace("small", "large");
 			}
-			imageUrl = avatar;
+			
+			userImage = new StringImageBundle(user.getUserId(), avatar);
 		} else if(!hasData && savedInstanceState != null) {
 			name = savedInstanceState.getString(NAME);
 			country = savedInstanceState.getString(COUNTRY);
 			description = savedInstanceState.getString(DESCRIPTION);
-			imageUrl = savedInstanceState.getString(IMAGE_URL);
-			image = (Bitmap) savedInstanceState.getParcelable(IMAGE);
+			userImage = savedInstanceState.getParcelable(USER_IMAGE);
 		}
 	}
 	
@@ -96,12 +90,7 @@ public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
 		descriptionView.setText(description);
 		
 		countryView.setVisibility(country.length() > 0 ? View.VISIBLE : View.GONE);
-		
-		if(image == null) {
-			new ImageFetcher(this).execute(imageUrl);
-		} else {
-			imageView.setImageBitmap(image);
-		}
+		ImageUtils.loadOrSetImage(userImage, imageView, getActivity());
 		
 		return v;
 	}
@@ -118,31 +107,6 @@ public class UserFragment extends TitleFragment implements OnFetched<Bitmap>{
         outState.putString(NAME, name);
         outState.putString(COUNTRY, country);
         outState.putString(DESCRIPTION, description);
-        outState.putString(IMAGE_URL, imageUrl);
-        outState.putParcelable(IMAGE, image);
+        outState.putParcelable(USER_IMAGE, userImage);
     }
-
-	@Override
-	public void onFetched(Bitmap result) {
-		image = result;
-		imageView.setImageBitmap(result);
-	}
-
-	@Override
-	public ProgressDialog getProgressDialog() {
-		return null;
-	}
-
-	@Override
-	public void onError(List<FlattrException> exceptions) {
-		for(FlattrException e : exceptions) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public String getTitle() {
-		return "Info";
-	}
-	
 }

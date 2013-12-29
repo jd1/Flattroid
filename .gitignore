@@ -22,5 +22,5 @@ local.properties
 .classpath
 .project
 
-src/org/isobeef/jd/flattroid/flattrApi/FlattrConsumerKey.java
+FlattrConsumerKey.java
 lib/

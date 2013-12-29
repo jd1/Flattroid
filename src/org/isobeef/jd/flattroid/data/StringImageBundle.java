@@ -4,13 +4,18 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Holds the url and description of an image and if available the bitmap.
+ * @author Johannes Dilli
+ *
+ */
 public class StringImageBundle implements Parcelable {
-	public String getStringItem() {
-		return stringItem;
+	public String getDescription() {
+		return description;
 	}
 
-	public String getAvatar() {
-		return avatar;
+	public String getAvatarUrl() {
+		return avatarUrl;
 	}
 	
 	public void setBitmap(Bitmap b) {
@@ -20,21 +25,25 @@ public class StringImageBundle implements Parcelable {
 	public Bitmap getBitmap() {
 		return bitmap;
 	}
+	
+	public boolean hasBitmap() {
+		return bitmap != null;
+	}
 
 	public StringImageBundle(String stringItem, String avatar) {
 		super();
-		this.stringItem = stringItem;
-		this.avatar = avatar;
+		this.description = stringItem;
+		this.avatarUrl = avatar;
 	}
 
 	protected StringImageBundle(Parcel in) {
-		stringItem = in.readString();
-		avatar = in.readString();
+		description = in.readString();
+		avatarUrl = in.readString();
 		bitmap = in.readParcelable((ClassLoader) Bitmap.CREATOR);
 	}
 
-	protected String stringItem;
-	protected String avatar;
+	protected String description;
+	protected String avatarUrl;
 	protected Bitmap bitmap = null;
 	
 	
@@ -45,8 +54,8 @@ public class StringImageBundle implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(stringItem);
-		dest.writeString(avatar);
+		dest.writeString(description);
+		dest.writeString(avatarUrl);
 		if(bitmap != null) {
 			dest.writeParcelable(bitmap, 0);
 		}

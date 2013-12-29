@@ -8,7 +8,7 @@ public abstract class TitleFragment extends Fragment {
 	public static final String TITLE = "TITLE";
 	private String title;
 	
-	public String getTitle() {
+	public final String getTitle() {
 		return title;
 	}
 	
