@@ -22,5 +22,8 @@ local.properties
 .classpath
 .project
 
+#Flattr key
 FlattrConsumerKey.java
-lib/
+
+#libs
+*.jar

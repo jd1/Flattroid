@@ -28,17 +28,12 @@ public class UserFragment extends TitleFragment {
 	protected TextView descriptionView;
 	protected ImageView imageView;
 	
-	protected boolean hasData;
 	protected String name;
 	protected String country = "";
 	protected String description;
 	protected StringImageBundle userImage;
 	
 	protected UserFetcher fetcher = null;
-	
-	public UserFragment() {
-		hasData = false;
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -68,11 +63,13 @@ public class UserFragment extends TitleFragment {
 			}
 			
 			userImage = new StringImageBundle(user.getUserId(), avatar);
-		} else if(!hasData && savedInstanceState != null) {
+		} else if(savedInstanceState != null) {
 			name = savedInstanceState.getString(NAME);
 			country = savedInstanceState.getString(COUNTRY);
 			description = savedInstanceState.getString(DESCRIPTION);
 			userImage = savedInstanceState.getParcelable(USER_IMAGE);
+		} else {
+			throw new IllegalArgumentException("No user!");
 		}
 	}
 	

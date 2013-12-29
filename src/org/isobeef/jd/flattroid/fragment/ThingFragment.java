@@ -28,14 +28,11 @@ public class ThingFragment extends TitleFragment {
 	public static final String TITLE = "title";
 	
 	protected List<Thing> things;
-	//TODO remove hasData
-	protected boolean hasData;
 	
 	protected ThingListAdapter adapter;
 	
 	public ThingFragment() {
 		setRetainInstance(true);
-		hasData = false;
 	}
 	
 	@Override
@@ -47,14 +44,16 @@ public class ThingFragment extends TitleFragment {
         	arguments = savedInstanceState;
         }
         
-		if(!hasData && arguments != null) {
+		if(arguments != null) {
 			things = new ArrayList<Thing>();
 			List<String> json = arguments.getStringArrayList(FLATTRS);
 			for(String j : json) {
 				things.add(new Thing(new FlattrObject(j)));
 			}
+			adapter = new ThingListAdapter(things, getActivity());
+		} else {
+			throw new IllegalArgumentException("No things!");
 		}
-		adapter = new ThingListAdapter(things, getActivity());
 	}
 	
 	@Override

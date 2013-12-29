@@ -68,7 +68,7 @@ public class ThingActivity extends FlattrActivity implements OnFetched<Thing>{
 	protected static final String USERS = "users";
 	protected ArrayList<StringImageBundle> users;
 	
-	protected boolean hasData = false;
+	protected boolean hasData;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +94,7 @@ public class ThingActivity extends FlattrActivity implements OnFetched<Thing>{
 			hasData = true;
 		} else {
 			users = new ArrayList<StringImageBundle>();
+			hasData = false;
 		}
 	}
 	
