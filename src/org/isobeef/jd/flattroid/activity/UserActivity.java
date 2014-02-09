@@ -25,9 +25,11 @@ import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.Tab;
 import android.support.v7.app.ActionBar.TabListener;
 import android.util.Log;
 import android.view.Menu;
@@ -35,14 +37,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class UserActivity extends FlattrActivity implements OnFetched<UserActivityData> {
+/**
+ * Activity to show details about a user, his flattr things and activities.
+ * @author Johannes Dilli
+ *
+ */
+public class UserActivity extends FlattrActivity implements OnFetched<UserActivityData>, TabListener {
 	private static final String FRAGMENTS = "fragments";
 
 	public static String USER_ID = "userId";
 	
 	protected ActionBar mActionBar;
 	private PagerAdapter adapter;
-	protected TabListener tabListener;
 	protected ViewPager viewPager;
 	
 	@Override
@@ -55,8 +61,9 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		viewPager.setAdapter(adapter);
 		
 		mActionBar = getSupportActionBar();
-		//mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         //indicator.setOnPageChangeListener(pageChangeListener);
+		
 		
 		if(savedInstanceState != null) {
 			
@@ -117,11 +124,7 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		
 		if(user != null) {
 			mActionBar.setTitle(user.getFirstname() + " " + user.getLastname());
-			UserFragment fragment = new UserFragment();
-			Bundle bundle = new Bundle();
-			bundle.putString(UserFragment.USER, user.toJSON());
-			fragment.setArguments(bundle);
-			adapter.add(fragment);
+			addUser(user);
 		}
 		
 		if(things != null && !things.isEmpty()) {
@@ -145,13 +148,23 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		}
 	}
 	
+	private void addUser(User user) {
+		UserFragment fragment = new UserFragment();
+		Bundle bundle = new Bundle();
+		bundle.putString(UserFragment.USER, user.toJSON());
+		fragment.setArguments(bundle);
+		addTab(fragment);
+		Log.d(TAG, "added user fragment.");
+	}
+	
 	private void addThings(List<Thing> things, String title) {
 		ThingFragment fragment = new ThingFragment();
 		Bundle bundle = new Bundle();
 		bundle.putStringArrayList(ThingFragment.FLATTRS, JsonUtils.toJson(things));
 		bundle.putString(ThingFragment.TITLE, "Flattrs");
 		fragment.setArguments(bundle);
-		adapter.add(fragment);
+		addTab(fragment);
+		Log.d(TAG, "added thing fragment for " + title);
 	}
 	
 	private void addActivities(List<Activity> activities, String title) {
@@ -160,7 +173,16 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		bundle.putString(ActivitiesFragment.TITLE, title);
 		bundle.putStringArrayList(ActivitiesFragment.ACTIVITIES, JsonUtils.toJson(activities));
 		fragment.setArguments(bundle);
+		addTab(fragment);
+		Log.d(TAG, "added activities fragment for " + title);
+	}
+	
+	private void addTab(TitleFragment fragment) {
 		adapter.add(fragment);
+		Tab tab = mActionBar.newTab();
+		tab.setText(fragment.getTitle());
+		tab.setTabListener(this);
+		mActionBar.addTab(tab);
 	}
 
 	@Override
@@ -170,9 +192,9 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 
 	@Override
 	public void onError(List<FlattrException> exceptions) {
+		Toast.makeText(this, "Failed to load user data", Toast.LENGTH_LONG).show();
 		for(FlattrException e : exceptions) {
-			Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-			e.printStackTrace();
+			Log.e(TAG, "Failed to load user data", e);
 		}
 	}
 	
@@ -188,5 +210,22 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 			counter++;
 		}
 		savedInstanceState.putStringArray(FRAGMENTS, fragments);
+	}
+
+	@Override
+	public void onTabReselected(Tab arg0, FragmentTransaction arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction arg1) {
+		viewPager.setCurrentItem(tab.getPosition());
+	}
+
+	@Override
+	public void onTabUnselected(Tab arg0, FragmentTransaction arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 }

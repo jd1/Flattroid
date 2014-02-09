@@ -14,6 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * Fragment to show details about a {@link User}.
+ * @author Johannes Dilli
+ *
+ */
 public class UserFragment extends TitleFragment {
 	
 	public static final String USER = "user";

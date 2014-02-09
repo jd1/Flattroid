@@ -8,6 +8,11 @@ import org.shredzone.flattr4j.model.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * Fragment to show {@link Activity}s.
+ * @author Johannes Dilli
+ *
+ */
 public class ActivitiesFragment extends TitleFragment {
 	
 	private static final String TAG = "ActivitiesFragment";
