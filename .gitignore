@@ -23,7 +23,7 @@ local.properties
 .project
 
 #Flattr key
-FlattrConsumerKey.java
+FlattrKeySecret.java
 
 #libs
 *.jar

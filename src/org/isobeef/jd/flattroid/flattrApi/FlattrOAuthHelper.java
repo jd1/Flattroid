@@ -14,7 +14,6 @@ import org.shredzone.flattr4j.oauth.AndroidAuthenticator;
 import org.shredzone.flattr4j.oauth.ConsumerKey;
 import org.shredzone.flattr4j.oauth.Scope;
 
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,7 +27,7 @@ public class FlattrOAuthHelper implements OnFetched<AccessToken>{
 	private Register register;
 	
 	public FlattrOAuthHelper(Register register) {
-		foa = new FlattrConsumerKey();
+		foa = new FlattrKeySecret();
 		auth = new AndroidAuthenticator(HOST, foa);
 		this.register = register;
 	}
