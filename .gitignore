@@ -11,9 +11,16 @@
 # generated files
 bin/
 gen/
+target/
+build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+.gradle
+gradlew
+gradlew.bat
+gradle
+build.xml
 
 #Backup
 *~
@@ -21,6 +28,12 @@ local.properties
 # Eclipse project files
 .classpath
 .project
+.settings
+.metadata
+
+#Android Studio
+.idea
+*.iml
 
 #Flattr key
 FlattrKeySecret.java
