@@ -10,8 +10,6 @@ import android.util.Log;
 
 /**
  * Fragment to show {@link Activity}s.
- * @author Johannes Dilli
- *
  */
 public class ActivitiesFragment extends TitleFragment {
 	

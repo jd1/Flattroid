@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 /**
  * {@link ActionBarActivity} to show the catalog with {@link Category}s.
- * @author Johannes Dilli
  *
  */
 public class CatalogActivity extends ActionBarActivity implements OnCategorySelectedListener{

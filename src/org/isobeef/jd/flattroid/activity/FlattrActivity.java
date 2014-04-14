@@ -13,6 +13,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 public abstract class FlattrActivity extends ActionBarActivity {
@@ -27,10 +28,7 @@ public abstract class FlattrActivity extends ActionBarActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		service = Storage.getService(this);
-		if(service == null) {
-			Intent in = new Intent(this, Register.class);
-			startActivity(in);
-		}
+		checkService();
 	}
 	
 	@Override
@@ -38,6 +36,14 @@ public abstract class FlattrActivity extends ActionBarActivity {
 		super.onResume();
 		if(service == null) {
 			service = Storage.getService(this);
+		}
+		checkService();
+	}
+	
+	private void checkService() {
+		if(service == null) {
+			Intent in = new Intent(this, Register.class);
+			startActivity(in);
 		}
 	}
 	
@@ -50,7 +56,11 @@ public abstract class FlattrActivity extends ActionBarActivity {
 	}
 	
 	protected void flattr(Thing thing) {
-		new FlattrTask(service, new FlattrListener()).execute(thing);
+		if(thing == null) {
+			Log.w(TAG, "Cannot flattr null");
+		} else {
+			new FlattrTask(service, new FlattrListener()).execute(thing);
+		}
 	}
 	
 	class FlattrListener implements OnFetched<Boolean> {

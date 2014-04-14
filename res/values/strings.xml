@@ -6,6 +6,7 @@
     <string name="menu_settings">Settings</string>
     <string name="about">About</string>
     <string name="authenticate">Authenticate</string>
+    <string name="authenticate_text">You have to authenticate this app in Flattr to use it.</string>
     <string name="toFlattr">Flattr</string>
     <string name="share">Share</string>
     <string name="image">image</string>

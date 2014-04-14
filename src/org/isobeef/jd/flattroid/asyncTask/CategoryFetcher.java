@@ -11,8 +11,6 @@ import org.shredzone.flattr4j.model.Thing;
 
 /**
  * Fetch things in a category.
- * @author Johannes Dilli
- *
  */
 public class CategoryFetcher extends ServiceTask<CategoryId, Void, List<Thing>> {
 

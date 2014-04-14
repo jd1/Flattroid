@@ -24,8 +24,7 @@ public class TokenFetcher extends FetcherAsyncTask<Void, Void, AccessToken> {
 		try {
 			token = auth.fetchAccessToken(uri);
 		} catch (FlattrException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			exceptions.add(e);
 		}
 		return token;
 	}

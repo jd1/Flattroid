@@ -6,8 +6,6 @@ import android.os.Parcelable;
 
 /**
  * Holds the url and description of an image and if available the bitmap.
- * @author Johannes Dilli
- *
  */
 public class StringImageBundle implements Parcelable {
 	public String getDescription() {

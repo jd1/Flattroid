@@ -1,6 +1,7 @@
 package org.isobeef.jd.flattroid.activity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.isobeef.jd.flattroid.R;
@@ -14,9 +15,11 @@ import org.isobeef.jd.flattroid.data.StringImageBundle;
 import org.isobeef.jd.flattroid.util.ImageUtils;
 import org.isobeef.jd.flattroid.util.MyLog;
 import org.shredzone.flattr4j.exception.FlattrException;
+import org.shredzone.flattr4j.model.Category;
 import org.shredzone.flattr4j.model.Flattr;
 import org.shredzone.flattr4j.model.Thing;
 import org.shredzone.flattr4j.model.User;
+import org.shredzone.flattr4j.oauth.Scope;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -60,13 +63,15 @@ public class ThingActivity extends FlattrActivity implements OnFetched<Thing>{
 	protected String category;
 	
 	protected static final String CREATED = "created";
-	protected String created;
+	protected Date created;
 	
 	protected static final String AVATAR = "avatar";
 	protected String avatar;
 			
 	protected static final String USERS = "users";
 	protected ArrayList<StringImageBundle> users;
+	
+	protected Uri uri;
 	
 	protected boolean hasData;
 	
@@ -88,7 +93,7 @@ public class ThingActivity extends FlattrActivity implements OnFetched<Thing>{
 			title = savedInstanceState.getString(TITLE);
 			text = savedInstanceState.getString(TEXT);
 			category = savedInstanceState.getString(CATEGORY);
-			created = savedInstanceState.getString(CREATED);
+			created = new Date(savedInstanceState.getLong(CREATED));
 			avatar = savedInstanceState.getString(AVATAR);
 			users = savedInstanceState.getParcelableArrayList(USERS);
 			hasData = true;
@@ -108,7 +113,7 @@ public class ThingActivity extends FlattrActivity implements OnFetched<Thing>{
 				displayUser(bundle);
 			}
 		} else {
-			Uri uri = getIntent().getData();
+			uri = getIntent().getData();
 			if (uri != null) {
 				MyLog.d(TAG, uri.toString());
 				if(fetcher != null) {
@@ -125,25 +130,39 @@ public class ThingActivity extends FlattrActivity implements OnFetched<Thing>{
 		outState.putString(TITLE, title);
 		outState.putString(TEXT, text);
 		outState.putString(CATEGORY, category);
-		outState.putString(CREATED, created);
+		outState.putLong(CREATED, created.getTime());
 		outState.putString(AVATAR, avatar);
 		outState.putParcelableArrayList(USERS, users);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onFetched(Thing result) {
 		thing = result;
 		if(result != null) {
 			title = result.getTitle();
 			text = result.getDescription();
-			category = Storage.getCategoryName(result.getCategoryId(), this);
-			created = result.getCreated().toLocaleString();
+
+            final String categoryId = result.getCategoryId();
+            Storage.getCategory(categoryId, this, new Storage.WaitForCategory() {
+                @Override
+                public void onCategoriesAvailable(Category category) {
+                    ThingActivity.this.category = category.getName();
+                }
+
+                @Override
+                public void onError() {
+                    ThingActivity.this.category = "Category not found";
+                    Log.e(TAG, "Category " + categoryId + " not found.");
+                }
+            });
+			created = result.getCreated();
 			avatar = result.getImage().replace("medium", "huge");
 			
 			displayBasicContent();
 			
 			new FlattrsFetcher(service, new FlattrsListener()).execute(Thing.withId(result.getThingId()));
+		} else {
+			textView.setText("Unable to get data for " + uri.toString());
 		}
 		
 	}
@@ -205,7 +224,7 @@ public class ThingActivity extends FlattrActivity implements OnFetched<Thing>{
 		textView.setText(text);
 		categoryView.setText(category);
 		
-		createdView.setText(created);
+		createdView.setText(created.toString());
 		
 		flattrBtn.setOnClickListener(new OnClickListener() {
 			

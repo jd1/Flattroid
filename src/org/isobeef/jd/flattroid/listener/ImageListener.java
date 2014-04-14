@@ -8,6 +8,7 @@ import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 public class ImageListener implements ImageLoadingListener {
@@ -18,32 +19,26 @@ public class ImageListener implements ImageLoadingListener {
 		bundle = sib;
 		view = v;
 	}
-	
-	@Override
-	public void onLoadingStarted() {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void onLoadingFailed(FailReason failReason) {
-		Log.e("ImageListener", failReason.toString());
-		
-	}
+    @Override
+    public void onLoadingStarted(String s, View view) {
+        // TODO Auto-generated method stub
+    }
 
-	@Override
-	public void onLoadingComplete(Bitmap loadedImage) {
-		bundle.setBitmap(loadedImage);
-		new ImageDisplayer().display(loadedImage, view);
-		
-	}
+    @Override
+    public void onLoadingFailed(String s, View view, FailReason failReason) {
+        Log.e("ImageListener", failReason.toString());
+    }
 
-	@Override
-	public void onLoadingCancelled() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+        bundle.setBitmap(bitmap);
+        this.view.setImageBitmap(bundle.getBitmap());
+        this.view.setVisibility(View.VISIBLE);
+    }
 
-	
-	
+    @Override
+    public void onLoadingCancelled(String s, View view) {
+        // TODO Auto-generated method stub
+    }
 }

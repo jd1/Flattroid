@@ -39,8 +39,6 @@ import android.widget.Toast;
 
 /**
  * Activity to show details about a user, his flattr things and activities.
- * @author Johannes Dilli
- *
  */
 public class UserActivity extends FlattrActivity implements OnFetched<UserActivityData>, TabListener {
 	private static final String FRAGMENTS = "fragments";
@@ -54,7 +52,7 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_viewpager);
 		adapter = new PagerAdapter(getSupportFragmentManager());
 		viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -122,9 +120,13 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		List<Thing> things = result.getThings();
 		User user = result.getUser();
 		
+		
 		if(user != null) {
 			mActionBar.setTitle(user.getFirstname() + " " + user.getLastname());
 			addUser(user);
+			
+			MyLog.d(TAG, "Got data for user {0}: {1} incoming, {2} outgoing, {3} flattrs and {4} things",
+					user, incoming.size(), outgoing.size(), flattrs.size(), things.size());
 		}
 		
 		if(things != null && !things.isEmpty()) {

@@ -4,15 +4,16 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.nostra13.universalimageloader.core.assist.LoadedFrom;
 import com.nostra13.universalimageloader.core.display.BitmapDisplayer;
+import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 
 public class ImageDisplayer implements BitmapDisplayer {
 
-	@Override
-	public Bitmap display(Bitmap bitmap, ImageView imageView) {
-		imageView.setImageBitmap(bitmap);
-		imageView.setVisibility(View.VISIBLE);
-		return bitmap;
-	}
+    @Override
+    public void display(Bitmap bitmap, ImageAware imageAware, LoadedFrom loadedFrom) {
+        imageAware.setImageBitmap(bitmap);
+        imageAware.getWrappedView().setVisibility(View.VISIBLE);
+    }
 
 }

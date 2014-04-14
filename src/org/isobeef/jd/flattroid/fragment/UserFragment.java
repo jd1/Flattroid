@@ -16,8 +16,6 @@ import android.widget.TextView;
 
 /**
  * Fragment to show details about a {@link User}.
- * @author Johannes Dilli
- *
  */
 public class UserFragment extends TitleFragment {
 	
@@ -61,6 +59,7 @@ public class UserFragment extends TitleFragment {
 			}
 			description = user.getDescription();
 			String avatar = user.getGravatar();
+            //TODO move to util
 			if(avatar.contains("gravatar")) {
 				avatar = avatar.replace("s=40", "s=200");
 			} else {
