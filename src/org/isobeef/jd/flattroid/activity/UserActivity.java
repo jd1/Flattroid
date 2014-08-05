@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.isobeef.jd.flattroid.R;
-import org.isobeef.jd.flattroid.adapter.PagerAdapter;
+import org.isobeef.jd.flattroid.adapter.TabsPagerAdapter;
 import org.isobeef.jd.flattroid.asyncTask.OnFetched;
 import org.isobeef.jd.flattroid.asyncTask.UserActivityData;
 import org.isobeef.jd.flattroid.asyncTask.UserDataFetcher;
@@ -24,9 +24,10 @@ import org.shredzone.flattr4j.model.UserId;
 import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
+import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBar.Tab;
@@ -41,22 +42,22 @@ import android.widget.Toast;
  * Activity to show details about a user, his flattr things and activities.
  */
 public class UserActivity extends FlattrActivity implements OnFetched<UserActivityData>, TabListener {
-	private static final String FRAGMENTS = "fragments";
+	private static final String TABS = "TABS";
 
 	public static String USER_ID = "userId";
 	
 	protected ActionBar mActionBar;
-	private PagerAdapter adapter;
 	protected ViewPager viewPager;
+    private TabsPagerAdapter pagerAdapter;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_viewpager);
-		adapter = new PagerAdapter(getSupportFragmentManager());
 		viewPager = (ViewPager) findViewById(R.id.viewpager);
-		viewPager.setAdapter(adapter);
+        pagerAdapter = new TabsPagerAdapter(this, viewPager);
+		viewPager.setAdapter(pagerAdapter);
 		
 		mActionBar = getSupportActionBar();
 		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -64,16 +65,18 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		
 		
 		if(savedInstanceState != null) {
+
+            ArrayList<Parcelable> tabs = savedInstanceState.getParcelableArrayList(TABS);
+            for (Parcelable pracelable : tabs) {
+                if(pracelable instanceof TabsPagerAdapter.TabInfo) {
+                    TabsPagerAdapter.TabInfo tabInfo = (TabsPagerAdapter.TabInfo) pracelable;
+                    Tab tab = mActionBar.newTab();
+                    tab.setText(tabInfo.getTitle());
+                    pagerAdapter.addTab(tab, tabInfo.getClazz(), tabInfo.getArgs());
+                }
+            }
 			
-        	String[] frags = savedInstanceState.getStringArray(FRAGMENTS);
-        	for(String tag : frags) {
-        		TitleFragment fragment = (TitleFragment) getSupportFragmentManager().findFragmentByTag(tag);
-        		if(fragment == null) {
-        			Log.e(TAG, "fragment null " + tag);
-        		} else {
-        			adapter.add(fragment);
-        		}
-        	}
+
         } else {
         	Uri uri = getIntent().getData();
     		if (uri != null) {
@@ -151,40 +154,39 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 	}
 	
 	private void addUser(User user) {
-		UserFragment fragment = new UserFragment();
+
 		Bundle bundle = new Bundle();
 		bundle.putString(UserFragment.USER, user.toJSON());
-		fragment.setArguments(bundle);
-		addTab(fragment);
+
+        Tab tab = mActionBar.newTab();
+        tab.setText("Info");
+        pagerAdapter.addTab(tab, UserFragment.class, bundle);
+
 		Log.d(TAG, "added user fragment.");
 	}
 	
 	private void addThings(List<Thing> things, String title) {
-		ThingFragment fragment = new ThingFragment();
 		Bundle bundle = new Bundle();
 		bundle.putStringArrayList(ThingFragment.FLATTRS, JsonUtils.toJson(things));
-		bundle.putString(ThingFragment.TITLE, "Flattrs");
-		fragment.setArguments(bundle);
-		addTab(fragment);
+		bundle.putString(ThingFragment.TITLE, title);
+
+        Tab tab = mActionBar.newTab();
+        tab.setText(title);
+        pagerAdapter.addTab(tab, ThingFragment.class, bundle);
+
 		Log.d(TAG, "added thing fragment for " + title);
 	}
 	
 	private void addActivities(List<Activity> activities, String title) {
-		ActivitiesFragment fragment = new ActivitiesFragment();
 		Bundle bundle = new Bundle();
 		bundle.putString(ActivitiesFragment.TITLE, title);
 		bundle.putStringArrayList(ActivitiesFragment.ACTIVITIES, JsonUtils.toJson(activities));
-		fragment.setArguments(bundle);
-		addTab(fragment);
+
+        Tab tab = mActionBar.newTab();
+        tab.setText(title);
+        pagerAdapter.addTab(tab, ActivitiesFragment.class, bundle);
+
 		Log.d(TAG, "added activities fragment for " + title);
-	}
-	
-	private void addTab(TitleFragment fragment) {
-		adapter.add(fragment);
-		Tab tab = mActionBar.newTab();
-		tab.setText(fragment.getTitle());
-		tab.setTabListener(this);
-		mActionBar.addTab(tab);
 	}
 
 	@Override
@@ -203,15 +205,17 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-	  
-		String[] fragments = new String[adapter.getFragments().size()];
+
+        savedInstanceState.putParcelableArrayList(TABS, pagerAdapter.getTabs());
+
+		/*String[] fragments = new String[adapter.getFragments().size()];
 		int counter = 0;//adapter.getFragments().size() -1;
 		for(Fragment frag : adapter.getFragments()) {
 			MyLog.d(TAG, "save " + frag);
 			fragments[counter] = frag.getTag();
 			counter++;
 		}
-		savedInstanceState.putStringArray(FRAGMENTS, fragments);
+		savedInstanceState.putStringArray(FRAGMENTS, fragments);*/
 	}
 
 	@Override

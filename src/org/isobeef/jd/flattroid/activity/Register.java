@@ -47,7 +47,7 @@ public class Register extends ActionBarActivity implements OnFetched<AccessToken
 			@Override
 			public void onClick(View v) {
 				startAuthActivity();
-				
+
 			}
 		});
 	}
@@ -95,7 +95,10 @@ public class Register extends ActionBarActivity implements OnFetched<AccessToken
 		} else {
 			Toast.makeText(this, "Authentication complete!", Toast.LENGTH_LONG).show();
 			authBtn.setEnabled(false);
-			finish();
+            this.finish();
+            Intent i=new Intent(this, MainActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
 		}
 	}
 
