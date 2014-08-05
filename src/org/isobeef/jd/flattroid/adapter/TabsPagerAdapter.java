@@ -92,14 +92,21 @@ public class TabsPagerAdapter extends FragmentPagerAdapter
         mViewPager.setOnPageChangeListener(this);
     }
 
-    public void addTab(ActionBar.Tab tab, Class<? extends Fragment> clss, Bundle args) {
-        TabInfo info = new TabInfo(clss, args, tab.getText().toString());
+    public void addTab(TabInfo info) {
+        ActionBar.Tab tab = mActionBar.newTab();
+        tab.setText(info.title);
         tab.setTag(info);
         tab.setTabListener(this);
         mTabs.add(info);
         notifyDataSetChanged();
         mActionBar.addTab(tab);
     }
+
+    public void addTab(String title, Class<? extends Fragment> clss, Bundle args) {
+        addTab(new TabInfo(clss, args, title));
+    }
+
+
 
     @Override
     public int getCount() {

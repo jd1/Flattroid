@@ -61,7 +61,6 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		
 		mActionBar = getSupportActionBar();
 		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        //indicator.setOnPageChangeListener(pageChangeListener);
 		
 		
 		if(savedInstanceState != null) {
@@ -70,9 +69,7 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
             for (Parcelable pracelable : tabs) {
                 if(pracelable instanceof TabsPagerAdapter.TabInfo) {
                     TabsPagerAdapter.TabInfo tabInfo = (TabsPagerAdapter.TabInfo) pracelable;
-                    Tab tab = mActionBar.newTab();
-                    tab.setText(tabInfo.getTitle());
-                    pagerAdapter.addTab(tab, tabInfo.getClazz(), tabInfo.getArgs());
+                    pagerAdapter.addTab(tabInfo);
                 }
             }
 			
@@ -158,9 +155,8 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		Bundle bundle = new Bundle();
 		bundle.putString(UserFragment.USER, user.toJSON());
 
-        Tab tab = mActionBar.newTab();
-        tab.setText("Info");
-        pagerAdapter.addTab(tab, UserFragment.class, bundle);
+
+        pagerAdapter.addTab("Info", UserFragment.class, bundle);
 
 		Log.d(TAG, "added user fragment.");
 	}
@@ -170,9 +166,7 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		bundle.putStringArrayList(ThingFragment.FLATTRS, JsonUtils.toJson(things));
 		bundle.putString(ThingFragment.TITLE, title);
 
-        Tab tab = mActionBar.newTab();
-        tab.setText(title);
-        pagerAdapter.addTab(tab, ThingFragment.class, bundle);
+        pagerAdapter.addTab(title, ThingFragment.class, bundle);
 
 		Log.d(TAG, "added thing fragment for " + title);
 	}
@@ -182,9 +176,7 @@ public class UserActivity extends FlattrActivity implements OnFetched<UserActivi
 		bundle.putString(ActivitiesFragment.TITLE, title);
 		bundle.putStringArrayList(ActivitiesFragment.ACTIVITIES, JsonUtils.toJson(activities));
 
-        Tab tab = mActionBar.newTab();
-        tab.setText(title);
-        pagerAdapter.addTab(tab, ActivitiesFragment.class, bundle);
+        pagerAdapter.addTab(title, ActivitiesFragment.class, bundle);
 
 		Log.d(TAG, "added activities fragment for " + title);
 	}
