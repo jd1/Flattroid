@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.8.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
 apply plugin: 'android'
@@ -16,7 +16,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:18.0.+"
     compile "com.android.support:gridlayout-v7:18.0.+"
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.1'
-    compile ('org.shredzone.flattr4j:flattr4j-core:2.8') {
+    compile ('org.shredzone.flattr4j:flattr4j-core:2.10') {
         exclude group: 'org.apache.httpcomponents', module: 'httpcore'
         exclude group: 'org.apache.httpcomponents', module: 'httpclient'
         exclude group: 'org.json', module: 'json'
